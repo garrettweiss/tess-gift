@@ -1,7 +1,11 @@
 import { useState } from 'react';
 import { AppStateProvider, useAppState } from './state/context';
 import { ProgressionTracker } from './components/ProgressionTracker';
+import { RestartButton } from './components/RestartButton';
 import { VisitedPlacesOverlay } from './components/VisitedPlaces';
+
+/** Set to false (or remove RestartButton usage below) to drop the restart button for production. */
+const SHOW_RESTART_BUTTON = true;
 import { Welcome } from './screens/Welcome';
 import { Opening } from './screens/Opening';
 import { Arrival } from './screens/Arrival';
@@ -26,6 +30,7 @@ function AppRouter() {
     <>
       <VisitedPlacesOverlay open={showVisitedPlaces} onClose={() => setShowVisitedPlaces(false)} />
       <ProgressionTracker onOpenVisitedPlaces={() => setShowVisitedPlaces(true)} />
+      {SHOW_RESTART_BUTTON && <RestartButton />}
       {phase === 'welcome' && <Welcome />}
       {phase === 'opening' && <Opening />}
       {phase === 'arrival' && <Arrival />}

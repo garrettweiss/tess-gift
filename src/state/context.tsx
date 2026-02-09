@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import type { AppState, Phase } from '../types';
 import { getTestPhotoDataUrl } from '../testPhoto';
+import { getInitialState } from './initialState';
 import { loadState, saveState } from './persistence';
 import {
   advanceFurthestTo,
@@ -31,6 +32,8 @@ interface Actions {
   resetPosterPhase: () => void;
   arriveAtNextStop: () => void;
   goBackToPreviousStep: () => void;
+  /** Restart from the very first screen (welcome). For testing; easy to remove. */
+  restartFromBeginning: () => void;
 }
 
 const AppStateContext = createContext<{ state: AppState; actions: Actions } | null>(null);
@@ -219,6 +222,9 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
           }
           return { ...s, ...stateForStep(s, prev) };
         });
+      },
+      restartFromBeginning() {
+        setState(getInitialState());
       },
     };
   }, []);
