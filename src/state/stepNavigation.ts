@@ -91,7 +91,9 @@ export function getPreviousStep(
   const { stopIndex, phase } = current;
   const idx = PHASE_ORDER.indexOf(phase);
   if (idx > 0) {
-    const prevPhase = PHASE_ORDER[idx - 1];
+    let prevPhase = PHASE_ORDER[idx - 1];
+    // Skip camera when going Back — user only sees camera when they tap "Take the photo" (or Test photo)
+    if (prevPhase === 'camera') prevPhase = 'arrival';
     return prevPhase ? { stopIndex, phase: prevPhase } : { stopIndex, phase: 'between-stops' };
   }
   if (stopIndex === 0) return 'opening';
