@@ -89,9 +89,8 @@ export const COPY = {
   },
 
   final: {
-    header: "That was the last stop.",
-    body1: "You didn't see everything.",
-    body2: 'You just learned where to look.',
+    header: 'Congratulations!',
+    body: 'Hope you had fun learning about some weird London things and now Archie wants to enjoy a pint with you!',
     button: 'Complete the Field Guide',
   },
 

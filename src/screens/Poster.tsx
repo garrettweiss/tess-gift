@@ -32,20 +32,22 @@ export function Poster() {
       </p>
 
       <p className="screen__body mt-2">{c.sizeLabel}</p>
-      <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
+      <div style={{ display: 'flex', gap: 12, marginBottom: 24 }} role="group" aria-label={c.sizeLabel}>
         <button
           type="button"
-          className="btn btn--secondary"
+          className={`btn btn--secondary${size === 'a3' ? ' btn--selected' : ''}`}
           style={{ flex: 1 }}
           onClick={() => setSize('a3')}
+          aria-pressed={size === 'a3'}
         >
           {c.sizeA3}
         </button>
         <button
           type="button"
-          className="btn btn--secondary"
+          className={`btn btn--secondary${size === '8x10' ? ' btn--selected' : ''}`}
           style={{ flex: 1 }}
           onClick={() => setSize('8x10')}
+          aria-pressed={size === '8x10'}
         >
           {c.size8x10}
         </button>
