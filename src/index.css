@@ -125,6 +125,13 @@ h1, h2, h3 {
   margin-bottom: 24px;
 }
 
+.screen__body--directions {
+  color: var(--text-muted);
+  font-size: 15px;
+  font-style: italic;
+  margin-bottom: 16px;
+}
+
 .screen__subtext {
   font-size: 14px;
   color: var(--text-muted);

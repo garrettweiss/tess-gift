@@ -3,7 +3,7 @@ import { BETWEEN_STOPS_PROMPTS } from '../data/stops';
 
 export function EnRoute() {
   const { state, actions } = useAppState();
-  const promptIndex = state.currentStopIndex % BETWEEN_STOPS_PROMPTS.length;
+  const promptIndex = Math.max(0, state.currentStopIndex) % BETWEEN_STOPS_PROMPTS.length;
   const prompt = BETWEEN_STOPS_PROMPTS[promptIndex];
 
   return (

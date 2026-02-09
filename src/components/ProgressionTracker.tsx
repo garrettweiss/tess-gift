@@ -22,6 +22,7 @@ interface ProgressionTrackerProps {
 export function ProgressionTracker({ onOpenVisitedPlaces }: ProgressionTrackerProps = {}) {
   const { state } = useAppState();
   const { stops, currentStopIndex, phase } = state;
+  const displayIndex = currentStopIndex === -1 ? 0 : currentStopIndex;
   const total = stops.length;
   const completed = stops.filter((s) => s.completed).length;
   const remaining = total - completed;
@@ -37,7 +38,7 @@ export function ProgressionTracker({ onOpenVisitedPlaces }: ProgressionTrackerPr
     <div className="progression-tracker">
       <div className="progression-tracker__stations">
         <span className="progression-tracker__count">
-          Station {Math.min(currentStopIndex + 1, total)} of {total}
+          Station {Math.min(displayIndex + 1, total)} of {total}
         </span>
         <span className="progression-tracker__remaining">
           {remaining === 0 ? 'All done' : `${remaining} to go`}
@@ -48,7 +49,7 @@ export function ProgressionTracker({ onOpenVisitedPlaces }: ProgressionTrackerPr
           <span
             key={stop.id}
             className={`progression-tracker__dot ${
-              i < currentStopIndex ? 'is-completed' : i === currentStopIndex ? 'is-current' : ''
+              i < displayIndex ? 'is-completed' : i === displayIndex ? 'is-current' : ''
             }`}
           />
         ))}

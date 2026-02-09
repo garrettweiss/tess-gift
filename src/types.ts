@@ -12,6 +12,8 @@ export interface Stop {
   reflectionPrompt: string;
   /** Optional instruction shown on arrival before taking the photo (e.g. get a beer and cheers) */
   photoInstruction?: string;
+  /** Optional directions to help find the spot (shown on navigation and arrival) */
+  directions?: string;
   transportRecommendations: TransportOption[];
   lat: number;
   lng: number;

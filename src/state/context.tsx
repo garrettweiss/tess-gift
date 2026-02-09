@@ -44,7 +44,7 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
   const actions = useMemo<Actions>(() => {
     return {
       begin() {
-        setState((s) => ({ ...s, phase: 'arrival', currentStopIndex: 0 }));
+        setState((s) => ({ ...s, phase: 'navigation', currentStopIndex: -1 }));
       },
       openArrival() {
         setState((s) => ({ ...s, phase: 'arrival' }));
@@ -128,7 +128,7 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
       arriveAtNextStop() {
         setState((s) => ({
           ...s,
-          currentStopIndex: Math.min(s.currentStopIndex + 1, s.stops.length),
+          currentStopIndex: s.currentStopIndex === -1 ? 0 : Math.min(s.currentStopIndex + 1, s.stops.length),
           phase: 'arrival',
           enRoute: false,
         }));

@@ -17,7 +17,8 @@ function buildMapsUrl(lat: number, lng: number, mode: string): string {
 
 export function Navigation() {
   const { state, actions } = useAppState();
-  const idx = state.currentStopIndex + 1;
+  const isFirstStop = state.currentStopIndex === -1;
+  const idx = isFirstStop ? 0 : state.currentStopIndex + 1;
   const nextStop = state.stops[idx];
   if (!nextStop) return null;
 
@@ -35,7 +36,11 @@ export function Navigation() {
 
   return (
     <div className="screen">
-      <p className="screen__body">When you're ready, here's where to go next.</p>
+      <p className="screen__body">
+        {isFirstStop
+          ? "Here's your first stop. When you're ready, head there."
+          : "When you're ready, here's where to go next."}
+      </p>
       <div className="map-embed">
         <iframe
           title="Route to next stop"
@@ -48,6 +53,9 @@ export function Navigation() {
           referrerPolicy="no-referrer-when-downgrade"
         />
       </div>
+      {nextStop.directions && (
+        <p className="screen__body screen__body--directions mb-2">{nextStop.directions}</p>
+      )}
       <p className="screen__body mb-2">Best way to get there:</p>
       <ul className="transport-list">
         {nextStop.transportRecommendations.map((opt) => (

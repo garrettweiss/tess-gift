@@ -12,6 +12,9 @@ export function Arrival() {
       {photoInstruction && (
         <p className="screen__body screen__body--highlight">{photoInstruction}</p>
       )}
+      {stop?.directions && (
+        <p className="screen__body screen__body--directions">{stop.directions}</p>
+      )}
       <button type="button" className="btn btn--primary" onClick={actions.openCamera}>
         Take the photo
       </button>
