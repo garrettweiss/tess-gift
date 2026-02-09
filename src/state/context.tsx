@@ -133,8 +133,17 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
           const next = { ...s, phase };
           const step = getCurrentStep(next);
           const furthestStep = getFurthestStep(s);
-          const allowed = step === 'welcome' || step === 'opening' || step === 'final' || step === 'poster' || furthestStep === 'welcome' || furthestStep === 'opening' || isStepBeforeOrEqual(step, furthestStep);
-          const rejectGuard = !allowed && step !== 'welcome' && step !== 'opening' && step !== 'final' && step !== 'poster' && furthestStep !== 'welcome' && furthestStep !== 'opening' && !isStepBeforeOrEqual(step, furthestStep);
+          const allowed =
+            (typeof step === 'string' && (step === 'welcome' || step === 'opening' || step === 'final' || step === 'poster')) ||
+            (typeof furthestStep === 'string' && (furthestStep === 'welcome' || furthestStep === 'opening')) ||
+            isStepBeforeOrEqual(step, furthestStep);
+          const stepStr = typeof step === 'string' ? step : null;
+          const furthestStr = typeof furthestStep === 'string' ? furthestStep : null;
+          const rejectGuard =
+            !allowed &&
+            (stepStr === null || (stepStr !== 'welcome' && stepStr !== 'opening' && stepStr !== 'final' && stepStr !== 'poster')) &&
+            (furthestStr === null || (furthestStr !== 'welcome' && furthestStr !== 'opening')) &&
+            !isStepBeforeOrEqual(step, furthestStep);
           fetch('http://127.0.0.1:7244/ingest/ba18e457-6701-445c-8871-c4576ed0b5fa',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'context.tsx:setPhase',message:'setPhase eval',data:{requestedPhase:phase,currentPhase:s.phase,furthestPhase:s.furthestPhase,furthestStopIndex:s.furthestStopIndex,step:JSON.stringify(step),furthestStep:JSON.stringify(furthestStep),isStepBeforeOrEqual:isStepBeforeOrEqual(step, furthestStep),rejectGuard},timestamp:Date.now(),hypothesisId:'H2'})}).catch(()=>{});
           // #endregion
           // Once past welcome, never go back to it

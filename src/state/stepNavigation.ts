@@ -125,7 +125,7 @@ export function getNextStep(
   const { stopIndex, phase } = current;
   const idx = PHASE_ORDER.indexOf(phase);
   if (idx >= 0 && idx < PHASE_ORDER.length - 1) {
-    const nextPhase = PHASE_ORDER[idx + 1];
+    const nextPhase = PHASE_ORDER[idx + 1] as Phase;
     return { stopIndex, phase: nextPhase };
   }
   if (stopIndex >= state.stops.length - 1) return 'final';

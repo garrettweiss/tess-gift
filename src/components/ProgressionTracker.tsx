@@ -1,6 +1,5 @@
 import { useAppState } from '../state/context';
 import { canGoBack } from '../state/stepNavigation';
-import type { Phase } from '../types';
 import { COPY } from '../data/copy';
 
 interface ProgressionTrackerProps {
