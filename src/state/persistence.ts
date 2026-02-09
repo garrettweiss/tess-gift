@@ -26,7 +26,9 @@ export function loadState(): AppState {
     // Migrate: if missing furthest, set from current position so user stays at frontier
     if (state.furthestPhase === undefined || state.furthestStopIndex === undefined) {
       const step = getCurrentStep(state);
-      if (step === 'opening') {
+      if (step === 'welcome') {
+        state = { ...state, furthestStopIndex: -1, furthestPhase: 'welcome' };
+      } else if (step === 'opening') {
         state = { ...state, furthestStopIndex: -1, furthestPhase: 'opening' };
       } else if (step === 'final') {
         state = { ...state, furthestStopIndex: state.stops.length, furthestPhase: 'final' };

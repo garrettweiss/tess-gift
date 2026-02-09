@@ -12,6 +12,7 @@ import {
 } from './stepNavigation';
 
 interface Actions {
+  completeWelcome: () => void;
   begin: () => void;
   openArrival: () => void;
   openCamera: () => void;
@@ -52,6 +53,15 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
 
   const actions = useMemo<Actions>(() => {
     return {
+      completeWelcome() {
+        setState((s) => ({
+          ...s,
+          phase: 'opening' as Phase,
+          currentStopIndex: 0,
+          furthestStopIndex: -1,
+          furthestPhase: 'opening' as Phase,
+        }));
+      },
       begin() {
         setState((s) => {
           const next = { ...s, phase: 'navigation' as Phase, currentStopIndex: -1 };
@@ -115,15 +125,17 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
       },
       setPhase(phase: Phase) {
         setState((s) => {
+          // Once past welcome, never go back to it
+          if (phase === 'welcome' && s.phase !== 'welcome') return s;
           const next = { ...s, phase };
           const step = getCurrentStep(next);
           const furthestStep = getFurthestStep(s);
           // Don't allow jumping past the furthest step we've reached
-          if (step !== 'opening' && step !== 'final' && step !== 'poster' && furthestStep !== 'opening') {
+          if (step !== 'welcome' && step !== 'opening' && step !== 'final' && step !== 'poster' && furthestStep !== 'welcome' && furthestStep !== 'opening') {
             if (!isStepBeforeOrEqual(step, furthestStep)) return s;
           }
           const toAdvance =
-            step === 'opening' || step === 'final' || step === 'poster'
+            step === 'welcome' || step === 'opening' || step === 'final' || step === 'poster'
               ? undefined
               : step;
           const furthest = toAdvance ? advanceFurthestTo(next, toAdvance) : undefined;

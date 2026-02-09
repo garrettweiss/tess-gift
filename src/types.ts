@@ -22,6 +22,7 @@ export interface Stop {
 }
 
 export type Phase =
+  | 'welcome'
   | 'opening'
   | 'arrival'
   | 'camera'

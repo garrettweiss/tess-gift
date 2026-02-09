@@ -16,11 +16,12 @@ const PHASE_ORDER_INDEX: Record<Phase, number> = Object.fromEntries(
   PHASE_ORDER.map((p, i) => [p, i])
 ) as Record<Phase, number>;
 
-/** "Final" and "poster" come after all stops */
+/** "Final" and "poster" come after all stops; welcome is before opening */
 function phaseRank(p: Phase): number {
   if (p === 'final') return 1000;
   if (p === 'poster') return 1001;
   if (p === 'opening') return -1;
+  if (p === 'welcome') return -2;
   return PHASE_ORDER_INDEX[p] ?? -1;
 }
 
@@ -28,8 +29,9 @@ function phaseRank(p: Phase): number {
  * Step index for navigation/en-route is the stop we're navigating TO (currentStopIndex + 1).
  * For other phases it's the stop we're at (currentStopIndex).
  */
-export function getCurrentStep(state: AppState): { stopIndex: number; phase: Phase } | 'opening' | 'final' | 'poster' {
+export function getCurrentStep(state: AppState): { stopIndex: number; phase: Phase } | 'welcome' | 'opening' | 'final' | 'poster' {
   const { phase, currentStopIndex, stops } = state;
+  if (phase === 'welcome') return 'welcome';
   if (phase === 'opening') return 'opening';
   if (phase === 'final') return 'final';
   if (phase === 'poster') return 'poster';
@@ -41,16 +43,20 @@ export function getCurrentStep(state: AppState): { stopIndex: number; phase: Pha
   return { stopIndex: currentStopIndex, phase };
 }
 
-export function getFurthestStep(state: AppState): { stopIndex: number; phase: Phase } | 'opening' | 'final' | 'poster' {
+export function getFurthestStep(state: AppState): { stopIndex: number; phase: Phase } | 'welcome' | 'opening' | 'final' | 'poster' {
   const { furthestStopIndex, furthestPhase } = state;
+  if (furthestPhase === 'welcome') return 'welcome';
   if (furthestPhase === 'opening') return 'opening';
   if (furthestPhase === 'final') return 'final';
   if (furthestPhase === 'poster') return 'poster';
   return { stopIndex: furthestStopIndex, phase: furthestPhase };
 }
 
-type Step = { stopIndex: number; phase: Phase } | 'opening' | 'final' | 'poster';
+type Step = { stopIndex: number; phase: Phase } | 'welcome' | 'opening' | 'final' | 'poster';
 
+function isWelcome(s: Step): boolean {
+  return s === 'welcome';
+}
 function isOpening(s: Step): boolean {
   return s === 'opening';
 }
@@ -63,6 +69,8 @@ function isFinal(s: Step): boolean {
 
 /** Returns true if step A is before or equal to step B in the journey */
 export function isStepBeforeOrEqual(a: Step, b: Step): boolean {
+  if (isWelcome(a)) return true;
+  if (isWelcome(b)) return false;
   if (isOpening(a)) return true;
   if (isOpening(b)) return false;
   if (isPoster(a)) return isPoster(b);
@@ -77,12 +85,12 @@ export function isStepBeforeOrEqual(a: Step, b: Step): boolean {
   return false;
 }
 
-/** Previous step in the journey, or null if at opening */
+/** Previous step in the journey, or null if at welcome or opening (never go back to welcome) */
 export function getPreviousStep(
   state: AppState
 ): { stopIndex: number; phase: Phase } | 'opening' | 'final' | null {
   const current = getCurrentStep(state);
-  if (current === 'opening') return null;
+  if (current === 'welcome' || current === 'opening') return null;
   if (current === 'poster') return 'final';
   if (current === 'final') {
     const lastStop = state.stops.length - 1;

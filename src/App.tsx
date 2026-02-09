@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { AppStateProvider, useAppState } from './state/context';
 import { ProgressionTracker } from './components/ProgressionTracker';
 import { VisitedPlacesOverlay } from './components/VisitedPlaces';
+import { Welcome } from './screens/Welcome';
 import { Opening } from './screens/Opening';
 import { Arrival } from './screens/Arrival';
 import { Camera } from './screens/Camera';
@@ -25,6 +26,7 @@ function AppRouter() {
     <>
       <VisitedPlacesOverlay open={showVisitedPlaces} onClose={() => setShowVisitedPlaces(false)} />
       <ProgressionTracker onOpenVisitedPlaces={() => setShowVisitedPlaces(true)} />
+      {phase === 'welcome' && <Welcome />}
       {phase === 'opening' && <Opening />}
       {phase === 'arrival' && <Arrival />}
       {phase === 'camera' && <Camera />}

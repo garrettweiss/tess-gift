@@ -3,6 +3,7 @@ import { canGoBack } from '../state/stepNavigation';
 import type { Phase } from '../types';
 
 const STATION_STEP_LABELS: Record<Phase, string> = {
+  welcome: '—',
   opening: '—',
   arrival: 'Arrived',
   camera: 'Photo',
@@ -34,7 +35,7 @@ export function ProgressionTracker({ onOpenVisitedPlaces }: ProgressionTrackerPr
     phase !== 'poster' &&
     !['between-stops', 'navigation', 'en-route'].includes(phase);
 
-  if (phase === 'opening') return null;
+  if (phase === 'welcome' || phase === 'opening') return null;
 
   return (
     <div className="progression-tracker">
