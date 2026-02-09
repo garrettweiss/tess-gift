@@ -23,10 +23,10 @@ export function Welcome() {
         />
       </div>
       <h1 className="screen__title welcome__title">
-        Your adventure is here
+        Your delayed Christmas gift adventure is here
       </h1>
       <p className="screen__body welcome__body">
-        Sorry this is late — but we’re so excited for you to discover your city in a new way.
+        Sorry this is late but we couldn’t figure out what to get you lol. We decided on a chance to see London in a new way… hopefully see some stuff that a local wouldn’t even know about, but really make. We think these are the things that truly make London great… not the creation of Greenwich or 6 professional soccer teams or the red coats taking over the world.
       </p>
       <p className="screen__body welcome__body">
         You’ll need the full day for this. Only start when you’re really ready.

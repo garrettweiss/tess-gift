@@ -29,20 +29,24 @@ function AppRouter() {
   return (
     <>
       <VisitedPlacesOverlay open={showVisitedPlaces} onClose={() => setShowVisitedPlaces(false)} />
-      <ProgressionTracker onOpenVisitedPlaces={() => setShowVisitedPlaces(true)} />
-      {SHOW_RESTART_BUTTON && <RestartButton />}
-      {phase === 'welcome' && <Welcome />}
-      {phase === 'opening' && <Opening />}
-      {phase === 'arrival' && <Arrival />}
-      {phase === 'camera' && <Camera />}
-      {phase === 'confirm-photo' && <ConfirmPhoto />}
-      {phase === 'reveal' && <Reveal />}
-      {phase === 'reflection' && <Reflection />}
-      {phase === 'between-stops' && <BetweenStops />}
-      {phase === 'navigation' && <Navigation />}
-      {phase === 'en-route' && <EnRoute />}
-      {phase === 'final' && <Final />}
-      {phase === 'poster' && <Poster />}
+      <div className="app-layout">
+        <div className="app-content">
+          <ProgressionTracker onOpenVisitedPlaces={() => setShowVisitedPlaces(true)} />
+          {phase === 'welcome' && <Welcome />}
+          {phase === 'opening' && <Opening />}
+          {phase === 'arrival' && <Arrival />}
+          {phase === 'camera' && <Camera />}
+          {phase === 'confirm-photo' && <ConfirmPhoto />}
+          {phase === 'reveal' && <Reveal />}
+          {phase === 'reflection' && <Reflection />}
+          {phase === 'between-stops' && <BetweenStops />}
+          {phase === 'navigation' && <Navigation />}
+          {phase === 'en-route' && <EnRoute />}
+          {phase === 'final' && <Final />}
+          {phase === 'poster' && <Poster />}
+        </div>
+        {SHOW_RESTART_BUTTON && <RestartButton />}
+      </div>
     </>
   );
 }
