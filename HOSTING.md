@@ -101,7 +101,16 @@ Search for `127.0.0.1:7244` and remove those `fetch(...).catch(...)` blocks (and
 
 ---
 
-## 7. Summary
+## 7. Seeing who viewed the site (visitor IPs)
+
+The app sends a single request to `/api/visit` when the site loads. The **Vercel serverless function** in `api/visit.ts` logs the visitor’s IP (and optional country/city from Vercel’s geo headers).
+
+**Where to see IPs:** In the [Vercel dashboard](https://vercel.com) → your project → **Logs** (or **Deployments** → select a deployment → **Functions** → view logs). Look for log lines like `[visit] {"time":"...","ip":"...","country":"GB",...}`.  
+On the free tier you get IP and timestamp; **country/city** may be present on paid plans.
+
+---
+
+## 8. Summary
 
 | Topic | Plan |
 |-------|------|
