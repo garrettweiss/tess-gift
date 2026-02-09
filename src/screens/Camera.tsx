@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useAppState } from '../state/context';
+import { COPY } from '../data/copy';
 
 export function Camera() {
   const { actions } = useAppState();
@@ -25,8 +26,8 @@ export function Camera() {
         const notSecure = !window.isSecureContext;
         setError(
           notSecure
-            ? 'The camera only works on a secure connection (https). Open this page using the https:// URL from the dev server, then on your phone accept the certificate warning so the camera can run.'
-            : 'Camera access is needed to take the photo. Check that Safari has permission for this site in Settings → Safari → Camera.'
+            ? COPY.camera.errorInsecure
+            : COPY.camera.errorNoPermission
         );
       }
     }
@@ -55,7 +56,7 @@ export function Camera() {
       <div className="screen screen--centered">
         <p className="screen__body">{error}</p>
         <button type="button" className="btn btn--secondary" onClick={actions.goBackToPreviousStep}>
-          Back
+          {COPY.camera.backButton}
         </button>
       </div>
     );
@@ -64,13 +65,14 @@ export function Camera() {
   return (
     <div className="camera-wrap">
       <video ref={videoRef} className="camera-video" playsInline muted />
-      <p className="camera-overlay">
-        Find something worth remembering.<br />
-        You can include yourself if you want.
+      <p className="camera-overlay" style={{ whiteSpace: 'pre-line' }}>
+        {COPY.camera.overlayLine1}
+        {'\n'}
+        {COPY.camera.overlayLine2}
       </p>
       <div className="camera-capture-bar">
         <button type="button" className="btn btn--primary" onClick={capture}>
-          Capture
+          {COPY.camera.captureButton}
         </button>
       </div>
     </div>

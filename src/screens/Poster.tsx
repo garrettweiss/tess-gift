@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useAppState } from '../state/context';
 import { generatePosterPDF, type PosterSize } from '../poster/generatePoster';
+import { COPY } from '../data/copy';
 
 export function Poster() {
   const { state } = useAppState();
   const [size, setSize] = useState<PosterSize>('a3');
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const c = COPY.poster;
 
   const photos = state.stops
     .filter((s) => s.photo)
@@ -14,7 +16,6 @@ export function Poster() {
 
   const handleCreatePreview = () => {
     setPreviewUrl(null);
-    // Simple preview: we could render a canvas here; for now we just allow download
     setPreviewUrl('ready');
   };
 
@@ -25,12 +26,12 @@ export function Poster() {
 
   return (
     <div className="screen">
-      <h2 className="screen__header">Complete the Field Guide</h2>
+      <h2 className="screen__header">{c.header}</h2>
       <p className="screen__body">
-        One poster from the day. Your photos, your route.
+        {c.body}
       </p>
 
-      <p className="screen__body mt-2">Size:</p>
+      <p className="screen__body mt-2">{c.sizeLabel}</p>
       <div style={{ display: 'flex', gap: 12, marginBottom: 24 }}>
         <button
           type="button"
@@ -38,7 +39,7 @@ export function Poster() {
           style={{ flex: 1 }}
           onClick={() => setSize('a3')}
         >
-          A3
+          {c.sizeA3}
         </button>
         <button
           type="button"
@@ -46,28 +47,28 @@ export function Poster() {
           style={{ flex: 1 }}
           onClick={() => setSize('8x10')}
         >
-          8×10
+          {c.size8x10}
         </button>
       </div>
 
       {photos.length === 0 ? (
-        <p className="screen__body">No photos yet. Complete at least one stop to create your poster.</p>
+        <p className="screen__body">{c.noPhotos}</p>
       ) : previewUrl === 'ready' ? (
         <>
-          <p className="screen__subtext">Ready to download. Change size above if you prefer.</p>
+          <p className="screen__subtext">{c.readySubtext}</p>
           <button type="button" className="btn btn--primary mt-2" onClick={handleDownload}>
-            Download PDF
+            {c.downloadPdf}
           </button>
         </>
       ) : (
         <button type="button" className="btn btn--primary" onClick={handleCreatePreview}>
-          Create your poster
+          {c.createPoster}
         </button>
       )}
 
       <p className="screen__subtext mt-3">
-        Title: Hidden London: In Plain Sight<br />
-        Subtitle: Kyle & Tess • {date}
+        Title: {c.posterTitle}<br />
+        Subtitle: {c.posterSubtitlePrefix} • {date}
       </p>
     </div>
   );

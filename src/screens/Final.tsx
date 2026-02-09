@@ -1,16 +1,19 @@
 import { useAppState } from '../state/context';
+import { COPY } from '../data/copy';
 
 export function Final() {
   const { actions } = useAppState();
+  const c = COPY.final;
   return (
     <div className="screen screen--centered">
-      <h2 className="screen__header">That was the last stop.</h2>
-      <p className="screen__body">
-        You didn't see everything.<br />
-        You just learned where to look.
+      <h2 className="screen__header">{c.header}</h2>
+      <p className="screen__body" style={{ whiteSpace: 'pre-line' }}>
+        {c.body1}
+        {'\n'}
+        {c.body2}
       </p>
       <button type="button" className="btn btn--primary" onClick={actions.completeFinal}>
-        Complete the Field Guide
+        {c.button}
       </button>
     </div>
   );

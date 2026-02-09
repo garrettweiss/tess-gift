@@ -1,21 +1,7 @@
 import { useAppState } from '../state/context';
 import { canGoBack } from '../state/stepNavigation';
 import type { Phase } from '../types';
-
-const STATION_STEP_LABELS: Record<Phase, string> = {
-  welcome: '—',
-  opening: '—',
-  arrival: 'Arrived',
-  camera: 'Photo',
-  'confirm-photo': 'Photo',
-  reveal: 'Reveal',
-  reflection: 'Reflect',
-  'between-stops': 'Next station…',
-  navigation: 'Next station…',
-  'en-route': 'En route',
-  final: 'Final stop',
-  poster: 'Complete',
-};
+import { COPY } from '../data/copy';
 
 interface ProgressionTrackerProps {
   onOpenVisitedPlaces?: () => void;
@@ -29,7 +15,8 @@ export function ProgressionTracker({ onOpenVisitedPlaces }: ProgressionTrackerPr
   const total = stops.length;
   const completed = stops.filter((s) => s.completed).length;
   const remaining = total - completed;
-  const currentStepLabel = STATION_STEP_LABELS[phase];
+  const currentStepLabel = COPY.progressionTracker.stepLabels[phase];
+  const pt = COPY.progressionTracker;
   const showStepDetail =
     phase !== 'opening' &&
     phase !== 'poster' &&
@@ -46,16 +33,16 @@ export function ProgressionTracker({ onOpenVisitedPlaces }: ProgressionTrackerPr
             className="progression-tracker__back-btn"
             onClick={actions.goBackToPreviousStep}
           >
-            ← Back
+            {pt.back}
           </button>
         </p>
       )}
       <div className="progression-tracker__stations">
         <span className="progression-tracker__count">
-          Station {Math.min(displayIndex + 1, total)} of {total}
+          {pt.stationOf} {Math.min(displayIndex + 1, total)} {pt.of} {total}
         </span>
         <span className="progression-tracker__remaining">
-          {remaining === 0 ? 'All done' : `${remaining} to go`}
+          {remaining === 0 ? pt.allDone : `${remaining} ${pt.toGo}`}
         </span>
       </div>
       <div className="progression-tracker__line" aria-hidden>
@@ -70,12 +57,12 @@ export function ProgressionTracker({ onOpenVisitedPlaces }: ProgressionTrackerPr
       </div>
       {showStepDetail && (
         <p className="progression-tracker__step">
-          At: <em>{currentStepLabel}</em>
+          {pt.atLabel} <em>{currentStepLabel}</em>
         </p>
       )}
       {phase === 'poster' && (
         <p className="progression-tracker__step progression-tracker__step--done">
-          All stations complete
+          {pt.allStationsComplete}
         </p>
       )}
       {completed > 0 && onOpenVisitedPlaces && (
@@ -85,7 +72,7 @@ export function ProgressionTracker({ onOpenVisitedPlaces }: ProgressionTrackerPr
             className="progression-tracker__visited-link"
             onClick={onOpenVisitedPlaces}
           >
-            Places you&apos;ve been
+            {pt.placesYouveBeen}
           </button>
         </p>
       )}

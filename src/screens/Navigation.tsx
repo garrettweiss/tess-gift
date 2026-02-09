@@ -1,4 +1,5 @@
 import { useAppState } from '../state/context';
+import { COPY } from '../data/copy';
 
 function getTravelMode(mode: string): string {
   switch (mode) {
@@ -34,12 +35,11 @@ export function Navigation() {
 
   const mapsEmbedUrl = `https://www.google.com/maps?q=${nextStop.lat},${nextStop.lng}&output=embed`;
 
+  const c = COPY.navigation;
   return (
     <div className="screen">
       <p className="screen__body">
-        {isFirstStop
-          ? "Here's your first stop. When you're ready, head there."
-          : "When you're ready, here's where to go next."}
+        {isFirstStop ? c.firstStopBody : c.nextStopBody}
       </p>
       <div className="map-embed">
         <iframe
@@ -56,7 +56,7 @@ export function Navigation() {
       {nextStop.directions && (
         <p className="screen__body screen__body--directions mb-2">{nextStop.directions}</p>
       )}
-      <p className="screen__body mb-2">Best way to get there:</p>
+      <p className="screen__body mb-2">{c.bestWay}</p>
       <ul className="transport-list">
         {nextStop.transportRecommendations.map((opt) => (
           <li key={opt.mode} className={opt.recommended ? 'recommended' : ''}>
@@ -68,16 +68,16 @@ export function Navigation() {
             </span>
             <span>
               {opt.label} — {opt.description}
-              {opt.recommended ? ' (recommended)' : ''}
+              {opt.recommended ? ` ${c.recommended}` : ''}
             </span>
           </li>
         ))}
       </ul>
       <button type="button" className="btn btn--primary mt-2" onClick={handleTakeMeThere}>
-        Take me there
+        {c.takeMeThere}
       </button>
       <p className="screen__subtext mt-2">
-        Coordinates (for manual search): {nextStop.lat}, {nextStop.lng}
+        {c.coordinatesLabel} {nextStop.lat}, {nextStop.lng}
       </p>
     </div>
   );

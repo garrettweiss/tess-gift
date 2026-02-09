@@ -1,4 +1,5 @@
 import { jsPDF } from 'jspdf';
+import { COPY } from '../data/copy';
 
 export type PosterSize = 'a3' | '8x10';
 
@@ -29,17 +30,18 @@ export function generatePosterPDF(
   const contentBottom = pageH - MARGIN;
   let y = contentTop;
 
+  const pdfCopy = COPY.posterPdf;
   // Title
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(TITLE_FONT_SIZE);
-  doc.text('Hidden London: In Plain Sight', MARGIN, y);
+  doc.text(pdfCopy.title, MARGIN, y);
   y += TITLE_FONT_SIZE + 6;
 
   // Subtitle
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(SUBTITLE_FONT_SIZE);
   doc.setTextColor(100, 100, 100);
-  doc.text(`Kyle & Tess • ${date}`, MARGIN, y);
+  doc.text(`${pdfCopy.subtitlePrefix} • ${date}`, MARGIN, y);
   doc.setTextColor(0, 0, 0);
   y += SUBTITLE_FONT_SIZE + 24;
 
@@ -52,7 +54,7 @@ export function generatePosterPDF(
   const n = photos.length;
   if (n === 0) {
     doc.setFontSize(12);
-    doc.text('No photos to include.', MARGIN, y);
+    doc.text(pdfCopy.noPhotos, MARGIN, y);
   } else {
     const cols = Math.ceil(Math.sqrt(n));
     const rows = Math.ceil(n / cols);
@@ -70,7 +72,7 @@ export function generatePosterPDF(
         doc.setFillColor(240, 240, 240);
         doc.rect(x, yCell, cellW, cellH, 'F');
         doc.setFontSize(10);
-        doc.text('Photo', x + cellW / 2 - 15, yCell + cellH / 2);
+        doc.text(pdfCopy.photoPlaceholder, x + cellW / 2 - 15, yCell + cellH / 2);
       }
     });
   }
@@ -85,8 +87,7 @@ export function generatePosterPDF(
   doc.setFont('helvetica', 'italic');
   doc.setFontSize(FOOTER_FONT_SIZE);
   doc.setTextColor(100, 100, 100);
-  const footerText = "London didn't change. You just learned where to look.";
-  doc.text(footerText, pageW / 2, contentBottom - 12, { align: 'center' });
+  doc.text(pdfCopy.footer, pageW / 2, contentBottom - 12, { align: 'center' });
   doc.setTextColor(0, 0, 0);
 
   doc.save(`Hidden-London-${size}-${date.replace(/\s/g, '-')}.pdf`);

@@ -1,5 +1,6 @@
 import { useAppState } from '../state/context';
 import type { Stop } from '../types';
+import { COPY } from '../data/copy';
 
 function summaryFromStory(storyText: string, maxLength = 200): string {
   const firstParagraph = storyText.split(/\n\n+/)[0]?.trim() ?? storyText;
@@ -33,17 +34,18 @@ export function VisitedPlacesOverlay({ open, onClose }: VisitedPlacesOverlayProp
 
   if (!open) return null;
 
+  const c = COPY.visitedPlaces;
   return (
-    <div className="visited-overlay" role="dialog" aria-label="Places you've been">
+    <div className="visited-overlay" role="dialog" aria-label={c.dialogAriaLabel}>
       <div className="visited-overlay__header">
-        <h2 className="visited-overlay__title">Places you&apos;ve been</h2>
+        <h2 className="visited-overlay__title">{c.title}</h2>
         <button
           type="button"
           className="visited-overlay__close"
           onClick={onClose}
-          aria-label="Close"
+          aria-label={c.closeAriaLabel}
         >
-          Close
+          {c.close}
         </button>
       </div>
       <div className="visited-overlay__list">

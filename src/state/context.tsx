@@ -7,6 +7,7 @@ import {
   advanceFurthestTo,
   getCurrentStep,
   getFurthestStep,
+  getNextStep,
   getPreviousStep,
   isStepBeforeOrEqual,
   stateForStep,
@@ -128,21 +129,42 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
       },
       setPhase(phase: Phase) {
         setState((s) => {
-          // Once past welcome, never go back to it
-          if (phase === 'welcome' && s.phase !== 'welcome') return s;
+          // #region agent log
           const next = { ...s, phase };
           const step = getCurrentStep(next);
           const furthestStep = getFurthestStep(s);
-          // Don't allow jumping past the furthest step we've reached
-          if (step !== 'welcome' && step !== 'opening' && step !== 'final' && step !== 'poster' && furthestStep !== 'welcome' && furthestStep !== 'opening') {
-            if (!isStepBeforeOrEqual(step, furthestStep)) return s;
+          const allowed = step === 'welcome' || step === 'opening' || step === 'final' || step === 'poster' || furthestStep === 'welcome' || furthestStep === 'opening' || isStepBeforeOrEqual(step, furthestStep);
+          const rejectGuard = !allowed && step !== 'welcome' && step !== 'opening' && step !== 'final' && step !== 'poster' && furthestStep !== 'welcome' && furthestStep !== 'opening' && !isStepBeforeOrEqual(step, furthestStep);
+          fetch('http://127.0.0.1:7244/ingest/ba18e457-6701-445c-8871-c4576ed0b5fa',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'context.tsx:setPhase',message:'setPhase eval',data:{requestedPhase:phase,currentPhase:s.phase,furthestPhase:s.furthestPhase,furthestStopIndex:s.furthestStopIndex,step:JSON.stringify(step),furthestStep:JSON.stringify(furthestStep),isStepBeforeOrEqual:isStepBeforeOrEqual(step, furthestStep),rejectGuard},timestamp:Date.now(),hypothesisId:'H2'})}).catch(()=>{});
+          // #endregion
+          // Once past welcome, never go back to it
+          if (phase === 'welcome' && s.phase !== 'welcome') return s;
+          const nextInner = { ...s, phase };
+          const stepInner = getCurrentStep(nextInner);
+          const furthestStepInner = getFurthestStep(s);
+          const immediateNext = getNextStep(s);
+          const isOneStepForward =
+            immediateNext !== null &&
+            (stepInner === immediateNext ||
+              (typeof stepInner === 'object' &&
+                typeof immediateNext === 'object' &&
+                stepInner.stopIndex === immediateNext.stopIndex &&
+                stepInner.phase === immediateNext.phase));
+          // Don't allow jumping past the furthest step we've reached (but allow advancing one step)
+          if (stepInner !== 'welcome' && stepInner !== 'opening' && stepInner !== 'final' && stepInner !== 'poster' && furthestStepInner !== 'welcome' && furthestStepInner !== 'opening') {
+            if (!isStepBeforeOrEqual(stepInner, furthestStepInner) && !isOneStepForward) {
+              // #region agent log
+              fetch('http://127.0.0.1:7244/ingest/ba18e457-6701-445c-8871-c4576ed0b5fa',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'context.tsx:setPhase guard',message:'setPhase blocked by guard',data:{requestedPhase:phase,step:JSON.stringify(stepInner),furthestStep:JSON.stringify(furthestStepInner)},timestamp:Date.now(),hypothesisId:'H2'})}).catch(()=>{});
+              // #endregion
+              return s;
+            }
           }
           const toAdvance =
-            step === 'welcome' || step === 'opening' || step === 'final' || step === 'poster'
+            stepInner === 'welcome' || stepInner === 'opening' || stepInner === 'final' || stepInner === 'poster'
               ? undefined
-              : step;
-          const furthest = toAdvance ? advanceFurthestTo(next, toAdvance) : undefined;
-          return furthest ? { ...next, ...furthest } : next;
+              : stepInner;
+          const furthest = toAdvance ? advanceFurthestTo(nextInner, toAdvance) : undefined;
+          return furthest ? { ...nextInner, ...furthest } : nextInner;
         });
       },
       setReflectionText(text: string) {

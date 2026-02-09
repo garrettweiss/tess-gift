@@ -1,4 +1,5 @@
 import { useAppState } from '../state/context';
+import { COPY } from '../data/copy';
 
 /**
  * Restart button: sends user back to the very first screen (Welcome).
@@ -8,15 +9,16 @@ import { useAppState } from '../state/context';
  */
 export function RestartButton() {
   const { actions } = useAppState();
+  const c = COPY.restartButton;
   return (
     <button
       type="button"
       className="restart-btn"
       onClick={actions.restartFromBeginning}
-      title="Restart from beginning (testing)"
-      aria-label="Restart from beginning"
+      title={c.title}
+      aria-label={c.ariaLabel}
     >
-      Restart
+      {c.label}
     </button>
   );
 }

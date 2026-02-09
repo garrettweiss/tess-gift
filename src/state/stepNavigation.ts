@@ -113,6 +113,25 @@ export function canGoBack(state: AppState): boolean {
   return getPreviousStep(state) !== null;
 }
 
+/** The immediate next step in the journey (one step forward), or null if at poster. */
+export function getNextStep(
+  state: AppState
+): { stopIndex: number; phase: Phase } | 'opening' | 'final' | 'poster' | null {
+  const current = getCurrentStep(state);
+  if (current === 'welcome') return 'opening';
+  if (current === 'opening') return { stopIndex: 0, phase: 'navigation' };
+  if (current === 'poster') return null;
+  if (current === 'final') return 'poster';
+  const { stopIndex, phase } = current;
+  const idx = PHASE_ORDER.indexOf(phase);
+  if (idx >= 0 && idx < PHASE_ORDER.length - 1) {
+    const nextPhase = PHASE_ORDER[idx + 1];
+    return { stopIndex, phase: nextPhase };
+  }
+  if (stopIndex >= state.stops.length - 1) return 'final';
+  return { stopIndex: stopIndex + 1, phase: 'navigation' };
+}
+
 /**
  * Apply a step to state: set currentStopIndex and phase (and enRoute) to show that step.
  * Used for "go back" only; does not change furthest.
