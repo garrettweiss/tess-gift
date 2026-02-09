@@ -1,0 +1,13 @@
+---
+description: Run dev server after making code changes so the user can test
+globs: 
+alwaysApply: true
+---
+
+After making code or config changes to this project, run the launch command so the user can test:
+
+1. From the project root, run: `npm run dev`
+2. Run it in the background (so the server stays up)
+3. Tell the user the Local and Network URLs from the output so they can open the app in the browser or on their phone
+
+If the user asks to "run" or "launch" or "test" the app, run `npm run dev` in the background and share the URLs.

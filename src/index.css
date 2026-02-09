@@ -1,0 +1,428 @@
+:root {
+  --bg: #0f0f0f;
+  --surface: #1a1a1a;
+  --text: #e8e6e3;
+  --text-muted: #9a9590;
+  --accent: #c4a574;
+  --border: #2a2a2a;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'DM Sans', system-ui, sans-serif;
+  --safe-top: env(safe-area-inset-top, 0);
+  --safe-bottom: env(safe-area-inset-bottom, 0);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.5;
+  min-height: 100dvh;
+  min-height: 100vh;
+  padding: var(--safe-top) 0 var(--safe-bottom);
+  overflow-x: hidden;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+#root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Screen container */
+.screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 20px;
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.screen--centered {
+  justify-content: center;
+  padding-top: 48px;
+  padding-bottom: 48px;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 16px 24px;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 500;
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  transition: opacity 0.15s, background 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:active {
+  opacity: 0.9;
+}
+
+.btn--primary {
+  background: var(--text);
+  color: var(--bg);
+}
+
+.btn--secondary {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.btn + .btn {
+  margin-top: 12px;
+}
+
+/* Typography in screens */
+.screen__title {
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 6vw, 36px);
+  font-weight: 500;
+  margin: 0 0 20px;
+  letter-spacing: -0.02em;
+}
+
+.screen__body {
+  color: var(--text-muted);
+  margin: 0 0 32px;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.screen__body--highlight {
+  color: var(--text);
+  font-weight: 500;
+  margin-bottom: 24px;
+}
+
+.screen__subtext {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin-top: 16px;
+}
+
+.screen__header {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 500;
+  margin: 0 0 12px;
+}
+
+/* Story text: rich / paragraph */
+.story-text {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  line-height: 1.65;
+  margin: 0 0 1em;
+}
+
+.story-text p {
+  margin: 0 0 1em;
+}
+
+.story-text p:last-child {
+  margin-bottom: 0;
+}
+
+/* Camera / full-bleed */
+.camera-wrap {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+}
+
+.camera-video {
+  flex: 1;
+  width: 100%;
+  object-fit: cover;
+}
+
+.camera-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 32px 20px calc(32px + var(--safe-bottom));
+  background: linear-gradient(transparent, rgba(0,0,0,0.85));
+  color: #fff;
+  font-size: 15px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.camera-capture-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px 20px calc(16px + var(--safe-bottom));
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  background: rgba(0,0,0,0.5);
+}
+
+/* Map embed */
+.map-embed {
+  width: 100%;
+  height: 220px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  margin: 16px 0;
+}
+
+/* Transport list */
+.transport-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.transport-list li {
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.transport-list li:last-child {
+  border-bottom: none;
+}
+
+.transport-list .recommended {
+  color: var(--accent);
+}
+
+/* Photo in reveal */
+.reveal-photo {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  margin: 16px 0;
+  border: 1px solid var(--border);
+}
+
+.reveal-caption {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-style: italic;
+  margin: -8px 0 20px;
+}
+
+/* Textarea */
+textarea.input {
+  width: 100%;
+  min-height: 100px;
+  padding: 14px;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  resize: vertical;
+  margin-bottom: 16px;
+}
+
+textarea.input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Progression tracker — London station / tube-map feel */
+.progression-tracker {
+  padding: 12px 20px 16px;
+  max-width: 480px;
+  margin: 0 auto;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.progression-tracker__stations {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+
+.progression-tracker__count {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  color: var(--text);
+}
+
+.progression-tracker__remaining {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.progression-tracker__line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.progression-tracker__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--border);
+  transition: background 0.2s;
+}
+
+.progression-tracker__dot.is-completed {
+  background: var(--accent);
+}
+
+.progression-tracker__dot.is-current {
+  background: var(--text);
+  box-shadow: 0 0 0 2px var(--bg);
+}
+
+.progression-tracker__step {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.progression-tracker__step em {
+  font-style: normal;
+  color: var(--accent);
+  font-family: var(--font-serif);
+}
+
+.progression-tracker__step--done {
+  color: var(--accent);
+}
+
+.progression-tracker__visited-link {
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--accent);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Visited places overlay — read-only list of completed stops */
+.visited-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  padding: var(--safe-top) 0 var(--safe-bottom);
+}
+
+.visited-overlay__header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.visited-overlay__title {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 500;
+  margin: 0;
+}
+
+.visited-overlay__close {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--accent);
+  background: none;
+  border: none;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.visited-overlay__list {
+  flex: 1;
+  overflow: auto;
+  padding: 20px;
+  max-width: 480px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.visited-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.visited-card:last-child {
+  margin-bottom: 0;
+}
+
+.visited-card__name {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-weight: 500;
+  margin: 0 0 10px;
+}
+
+.visited-card__summary {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--text-muted);
+  margin: 0 0 14px;
+}
+
+.visited-card__photo {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+
+/* Utilities */
+.mt-1 { margin-top: 8px; }
+.mt-2 { margin-top: 16px; }
+.mt-3 { margin-top: 24px; }
+.mb-2 { margin-bottom: 16px; }
