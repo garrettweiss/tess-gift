@@ -54,7 +54,7 @@ export function Camera() {
     return (
       <div className="screen screen--centered">
         <p className="screen__body">{error}</p>
-        <button type="button" className="btn btn--secondary" onClick={() => actions.setPhase('arrival')}>
+        <button type="button" className="btn btn--secondary" onClick={actions.goBackToPreviousStep}>
           Back
         </button>
       </div>

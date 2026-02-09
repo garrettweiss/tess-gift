@@ -10,5 +10,7 @@ export function getInitialState(): AppState {
     reflectionText: '',
     enRoute: false,
     completedDate: null,
+    furthestStopIndex: -1,
+    furthestPhase: 'opening',
   };
 }

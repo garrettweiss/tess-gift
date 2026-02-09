@@ -46,6 +46,9 @@ export interface AppState {
   enRoute: boolean;
   /** Completed date for poster subtitle */
   completedDate: string | null;
+  /** Furthest step the user has reached; they can go back to any step before this but not past it */
+  furthestStopIndex: number;
+  furthestPhase: Phase;
 }
 
 export const STORAGE_KEY = 'hidden-london-state';

@@ -1,4 +1,5 @@
 import { useAppState } from '../state/context';
+import { canGoBack } from '../state/stepNavigation';
 import type { Phase } from '../types';
 
 const STATION_STEP_LABELS: Record<Phase, string> = {
@@ -20,8 +21,9 @@ interface ProgressionTrackerProps {
 }
 
 export function ProgressionTracker({ onOpenVisitedPlaces }: ProgressionTrackerProps = {}) {
-  const { state } = useAppState();
+  const { state, actions } = useAppState();
   const { stops, currentStopIndex, phase } = state;
+  const showBack = canGoBack(state);
   const displayIndex = currentStopIndex === -1 ? 0 : currentStopIndex;
   const total = stops.length;
   const completed = stops.filter((s) => s.completed).length;
@@ -36,6 +38,17 @@ export function ProgressionTracker({ onOpenVisitedPlaces }: ProgressionTrackerPr
 
   return (
     <div className="progression-tracker">
+      {showBack && (
+        <p className="progression-tracker__back">
+          <button
+            type="button"
+            className="progression-tracker__back-btn"
+            onClick={actions.goBackToPreviousStep}
+          >
+            ← Back
+          </button>
+        </p>
+      )}
       <div className="progression-tracker__stations">
         <span className="progression-tracker__count">
           Station {Math.min(displayIndex + 1, total)} of {total}

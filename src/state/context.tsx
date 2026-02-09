@@ -2,6 +2,14 @@ import React, { createContext, useContext, useEffect, useMemo, useState } from '
 import type { AppState, Phase } from '../types';
 import { getTestPhotoDataUrl } from '../testPhoto';
 import { loadState, saveState } from './persistence';
+import {
+  advanceFurthestTo,
+  getCurrentStep,
+  getFurthestStep,
+  getPreviousStep,
+  isStepBeforeOrEqual,
+  stateForStep,
+} from './stepNavigation';
 
 interface Actions {
   begin: () => void;
@@ -21,6 +29,7 @@ interface Actions {
   completePoster: () => void;
   resetPosterPhase: () => void;
   arriveAtNextStop: () => void;
+  goBackToPreviousStep: () => void;
 }
 
 const AppStateContext = createContext<{ state: AppState; actions: Actions } | null>(null);
@@ -44,23 +53,43 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
   const actions = useMemo<Actions>(() => {
     return {
       begin() {
-        setState((s) => ({ ...s, phase: 'navigation', currentStopIndex: -1 }));
+        setState((s) => {
+          const next = { ...s, phase: 'navigation' as Phase, currentStopIndex: -1 };
+          const furthest = advanceFurthestTo(next, { stopIndex: 0, phase: 'navigation' });
+          return { ...next, ...furthest };
+        });
       },
       openArrival() {
-        setState((s) => ({ ...s, phase: 'arrival' }));
+        setState((s) => {
+          const next = { ...s, phase: 'arrival' as Phase };
+          const furthest = advanceFurthestTo(next, { stopIndex: s.currentStopIndex, phase: 'arrival' });
+          return { ...next, ...furthest };
+        });
       },
       openCamera() {
-        setState((s) => ({ ...s, phase: 'camera', pendingPhotoDataUrl: null }));
+        setState((s) => {
+          const next = { ...s, phase: 'camera' as Phase, pendingPhotoDataUrl: null };
+          const furthest = advanceFurthestTo(next, { stopIndex: s.currentStopIndex, phase: 'camera' });
+          return { ...next, ...furthest };
+        });
       },
       useTestPhoto() {
-        setState((s) => ({
-          ...s,
-          pendingPhotoDataUrl: getTestPhotoDataUrl(),
-          phase: 'confirm-photo',
-        }));
+        setState((s) => {
+          const next = {
+            ...s,
+            pendingPhotoDataUrl: getTestPhotoDataUrl(),
+            phase: 'confirm-photo' as Phase,
+          };
+          const furthest = advanceFurthestTo(next, { stopIndex: s.currentStopIndex, phase: 'confirm-photo' });
+          return { ...next, ...furthest };
+        });
       },
       setPendingPhoto(dataUrl: string) {
-        setState((s) => ({ ...s, pendingPhotoDataUrl: dataUrl, phase: 'confirm-photo' }));
+        setState((s) => {
+          const next = { ...s, pendingPhotoDataUrl: dataUrl, phase: 'confirm-photo' as Phase };
+          const furthest = advanceFurthestTo(next, { stopIndex: s.currentStopIndex, phase: 'confirm-photo' });
+          return { ...next, ...furthest };
+        });
       },
       confirmPhoto() {
         setState((s) => {
@@ -70,20 +99,36 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
           if (idx < stops.length && current && s.pendingPhotoDataUrl) {
             stops[idx] = { ...current, photo: s.pendingPhotoDataUrl, completed: true };
           }
-          return {
+          const next = {
             ...s,
             stops,
             currentStopIndex: idx,
-            phase: 'reveal',
+            phase: 'reveal' as Phase,
             pendingPhotoDataUrl: null,
           };
+          const furthest = advanceFurthestTo(next, { stopIndex: idx, phase: 'reveal' });
+          return { ...next, ...furthest };
         });
       },
       retakePhoto() {
-        setState((s) => ({ ...s, phase: 'camera', pendingPhotoDataUrl: null }));
+        setState((s) => ({ ...s, phase: 'camera' as Phase, pendingPhotoDataUrl: null }));
       },
       setPhase(phase: Phase) {
-        setState((s) => ({ ...s, phase }));
+        setState((s) => {
+          const next = { ...s, phase };
+          const step = getCurrentStep(next);
+          const furthestStep = getFurthestStep(s);
+          // Don't allow jumping past the furthest step we've reached
+          if (step !== 'opening' && step !== 'final' && step !== 'poster' && furthestStep !== 'opening') {
+            if (!isStepBeforeOrEqual(step, furthestStep)) return s;
+          }
+          const toAdvance =
+            step === 'opening' || step === 'final' || step === 'poster'
+              ? undefined
+              : step;
+          const furthest = toAdvance ? advanceFurthestTo(next, toAdvance) : undefined;
+          return furthest ? { ...next, ...furthest } : next;
+        });
       },
       setReflectionText(text: string) {
         setState((s) => ({ ...s, reflectionText: text }));
@@ -92,46 +137,76 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
         setState((s) => {
           const idx = s.currentStopIndex;
           const isLast = idx >= s.stops.length - 1;
-          return {
+          const next = {
             ...s,
             reflectionText: '',
-            phase: isLast ? 'final' : 'between-stops',
+            phase: (isLast ? 'final' : 'between-stops') as Phase,
           };
+          const furthest = isLast
+            ? advanceFurthestTo(next, 'final')
+            : advanceFurthestTo(next, { stopIndex: idx, phase: 'between-stops' });
+          return { ...next, ...furthest };
         });
       },
       goToNavigation() {
-        setState((s) => ({ ...s, phase: 'navigation' }));
+        setState((s) => {
+          const nextStopIndex = s.currentStopIndex + 1;
+          const next = { ...s, phase: 'navigation' as Phase };
+          const furthest = advanceFurthestTo(next, { stopIndex: nextStopIndex, phase: 'navigation' });
+          return { ...next, ...furthest };
+        });
       },
       takeMeThere(_recommendedMode?: string) {
-        setState((s) => ({
-          ...s,
-          phase: 'en-route',
-          enRoute: true,
-        }));
+        setState((s) => {
+          const nextStopIndex = s.currentStopIndex + 1;
+          const next = { ...s, phase: 'en-route' as Phase, enRoute: true };
+          const furthest = advanceFurthestTo(next, { stopIndex: nextStopIndex, phase: 'en-route' });
+          return { ...next, ...furthest };
+        });
       },
       setEnRoute(value: boolean) {
         setState((s) => ({ ...s, enRoute: value }));
       },
       completeFinal() {
-        setState((s) => ({
-          ...s,
-          phase: 'poster',
-          completedDate: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
-        }));
+        setState((s) => {
+          const next = {
+            ...s,
+            phase: 'poster' as Phase,
+            completedDate: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+          };
+          const furthest = advanceFurthestTo(next, 'poster');
+          return { ...next, ...furthest };
+        });
       },
       completePoster() {
         setState((s) => ({ ...s }));
       },
       resetPosterPhase() {
-        setState((s) => ({ ...s, phase: 'poster' }));
+        setState((s) => ({ ...s, phase: 'poster' as Phase }));
       },
       arriveAtNextStop() {
-        setState((s) => ({
-          ...s,
-          currentStopIndex: s.currentStopIndex === -1 ? 0 : Math.min(s.currentStopIndex + 1, s.stops.length),
-          phase: 'arrival',
-          enRoute: false,
-        }));
+        setState((s) => {
+          const newIdx = s.currentStopIndex === -1 ? 0 : Math.min(s.currentStopIndex + 1, s.stops.length);
+          const next = {
+            ...s,
+            currentStopIndex: newIdx,
+            phase: 'arrival' as Phase,
+            enRoute: false,
+          };
+          const furthest = advanceFurthestTo(next, { stopIndex: newIdx, phase: 'arrival' });
+          return { ...next, ...furthest };
+        });
+      },
+      goBackToPreviousStep() {
+        setState((s) => {
+          const prev = getPreviousStep(s);
+          if (!prev) return s;
+          if (prev === 'opening') return { ...s, ...stateForStep(s, 'opening') };
+          if (prev === 'final') {
+            return { ...s, phase: 'final' as Phase, currentStopIndex: s.stops.length - 1 };
+          }
+          return { ...s, ...stateForStep(s, prev) };
+        });
       },
     };
   }, []);
